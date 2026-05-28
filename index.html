@@ -3,251 +3,417 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <title>Lò Luyện Công Nhân Ngân Hàng</title>
+  <title>Trại Cai Nghiện KPI</title>
 
   <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
 
     body {
+
       margin: 0;
-      padding: 30px;
       font-family: Arial, sans-serif;
+
       background:
-        linear-gradient(135deg,
+        linear-gradient(
+          135deg,
           #0f172a,
           #1e293b,
-          #334155);
+          #334155
+        );
 
       color: white;
 
       min-height: 100vh;
+
     }
 
     .container {
-      max-width: 1000px;
+
+      width: 100%;
+      max-width: 900px;
+
       margin: auto;
+
+      padding: 20px;
+
+    }
+
+    .center {
+
+      display: flex;
+
+      justify-content: center;
+      align-items: center;
+
+      min-height: 100vh;
+
+    }
+
+    .menu {
+
+      width: 100%;
+
+      display: flex;
+      flex-direction: column;
+
+      gap: 20px;
+
+    }
+
+    .card {
+
+      background: rgba(255,255,255,0.08);
+
+      border: 1px solid rgba(255,255,255,0.1);
+
+      border-radius: 20px;
+
+      padding: 25px;
+
+      backdrop-filter: blur(12px);
+
     }
 
     .title {
+
       text-align: center;
-      margin-bottom: 30px;
+
+      margin-bottom: 20px;
+
     }
 
     .title h1 {
-      font-size: 42px;
+
       margin: 0;
+
+      font-size: 42px;
+
     }
 
     .title p {
+
       color: #cbd5e1;
-      margin-top: 10px;
+
     }
 
-    .top-options {
+    .option-grid {
+
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 30px;
-    }
 
-    .option-card {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 25px;
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
+      grid-template-columns: 1fr 1fr;
+
+      gap: 20px;
+
     }
 
     .option-card h2 {
+
       margin-top: 0;
-      font-size: 24px;
+
     }
 
     .option-card p {
+
       color: #cbd5e1;
+
     }
 
     .btn {
-      background: #22c55e;
-      color: white;
+
+      width: 100%;
+
       border: none;
-      padding: 12px 20px;
+
+      background: #22c55e;
+
+      color: white;
+
+      padding: 14px;
+
       border-radius: 12px;
-      cursor: pointer;
+
       font-size: 16px;
+
       font-weight: bold;
+
+      cursor: pointer;
+
       transition: 0.2s;
+
     }
 
     .btn:hover {
+
       transform: translateY(-2px);
+
       opacity: 0.9;
+
     }
 
     input[type=file] {
+
       margin-top: 10px;
+
+      width: 100%;
+
       color: white;
+
     }
 
-    .quiz-card {
+    .quiz {
+
       display: none;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 30px;
-      backdrop-filter: blur(10px);
+
     }
 
     .topbar {
+
       display: flex;
+
       justify-content: space-between;
+
+      align-items: center;
+
       margin-bottom: 20px;
-      flex-wrap: wrap;
+
       gap: 10px;
+
+      flex-wrap: wrap;
+
     }
 
     .badge {
-      background: #22c55e;
-      padding: 8px 14px;
+
+      background: rgba(255,255,255,0.1);
+
+      padding: 10px 14px;
+
       border-radius: 999px;
+
       font-size: 14px;
-      font-weight: bold;
+
     }
 
     .question {
+
       font-size: 28px;
-      line-height: 1.5;
-      margin-bottom: 30px;
+
+      line-height: 1.6;
+
+      margin-bottom: 25px;
+
     }
 
-    .answer-btn {
+    .answer {
+
       width: 100%;
+
       background: rgba(255,255,255,0.06);
+
+      border: 1px solid rgba(255,255,255,0.08);
+
       color: white;
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 16px;
+
+      padding: 18px;
+
       border-radius: 14px;
+
       margin-bottom: 15px;
-      cursor: pointer;
+
       text-align: left;
-      transition: 0.2s;
+
+      cursor: pointer;
+
       font-size: 16px;
+
+      transition: 0.2s;
+
     }
 
-    .answer-btn:hover {
+    .answer:hover {
+
       background: rgba(255,255,255,0.12);
+
     }
 
     .correct {
-      background: rgba(34,197,94,0.3);
+
+      background: rgba(34,197,94,0.35);
+
       border-color: #22c55e;
+
     }
 
     .wrong {
-      background: rgba(239,68,68,0.3);
+
+      background: rgba(239,68,68,0.35);
+
       border-color: #ef4444;
+
     }
 
-    .result {
-      margin-top: 25px;
-      padding: 20px;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.06);
+    .hint {
+
       display: none;
-      line-height: 1.8;
-    }
 
-    .next-btn {
       margin-top: 20px;
-      width: 100%;
+
+      padding: 18px;
+
+      border-radius: 14px;
+
+      background: rgba(255,255,255,0.06);
+
+      line-height: 1.8;
+
     }
 
     @media(max-width: 700px) {
 
-      body {
-        padding: 15px;
+      .option-grid {
+
+        grid-template-columns: 1fr;
+
       }
 
-      .top-options {
-        grid-template-columns: 1fr;
+      .title h1 {
+
+        font-size: 32px;
+
       }
 
       .question {
+
         font-size: 22px;
+
       }
 
     }
+
   </style>
+
 </head>
 
 <body>
 
-  <div class="container">
+  <!-- ====================== -->
+  <!-- MENU -->
+  <!-- ====================== -->
 
-    <div class="title">
-      <h1>💀 LÒ LUYỆN CÔNG NHÂN NGÂN HÀNG</h1>
+  <div
+    class="container center"
+    id="menuPage"
+  >
 
-      <p>
-        Học hôm nay để mai khỏi đứng quầy run như cầy sấy.
-      </p>
-    </div>
+    <div class="menu">
 
-    <div class="top-options">
+      <div class="title">
 
-      <div class="option-card">
-        <h2>📚 Dùng ngân hàng đề có sẵn</h2>
-
-        <p>
-          Web sẽ tự đọc file <b>data.xlsx</b>
-          trong GitHub Pages.
-        </p>
-
-        <button class="btn" onclick="loadDefaultExcel()">
-          Bắt đầu cày
-        </button>
-      </div>
-
-      <div class="option-card">
-        <h2>📤 Upload file riêng</h2>
+        <h1>
+          💀 TRẠI CAI NGHIỆN KPI
+        </h1>
 
         <p>
-          Upload file excel câu hỏi của bạn.
+          Học hôm nay để mai đỡ bị khách combat.
         </p>
 
-        <input
-          type="file"
-          id="excelFile"
-          accept=".xlsx,.xls"
-        />
+      </div>
+
+      <div class="option-grid">
+
+        <div class="card option-card">
+
+          <h2>
+            📚 Dùng đề có sẵn
+          </h2>
+
+          <p>
+            Tự load file
+            <b>data.xlsx</b>
+          </p>
+
+          <button
+            class="btn"
+            onclick="loadDefaultExcel()"
+          >
+            Bắt đầu cày
+          </button>
+
+        </div>
+
+        <div class="card option-card">
+
+          <h2>
+            📤 Upload file riêng
+          </h2>
+
+          <p>
+            Upload file excel của bạn.
+          </p>
+
+          <input
+            type="file"
+            id="excelFile"
+            accept=".xlsx,.xls"
+          >
+
+        </div>
+
       </div>
 
     </div>
 
-    <div class="quiz-card" id="quizCard">
+  </div>
+
+  <!-- ====================== -->
+  <!-- QUIZ -->
+  <!-- ====================== -->
+
+  <div
+    class="container quiz"
+    id="quizPage"
+  >
+
+    <div class="card">
 
       <div class="topbar">
 
-        <div class="badge" id="category"></div>
+        <div class="badge" id="counter">
+          Câu 1
+        </div>
 
-        <div class="badge" id="counter"></div>
+        <div class="badge" id="timer">
+          00:00
+        </div>
+
+        <button
+          class="btn"
+          style="width:auto;padding:10px 16px;background:#ef4444"
+          onclick="exitQuiz()"
+        >
+          Thoát
+        </button>
 
       </div>
 
-      <div class="question" id="question"></div>
+      <div
+        class="question"
+        id="question"
+      ></div>
 
       <div id="answers"></div>
 
-      <div class="result" id="result"></div>
-
-      <button class="btn next-btn" onclick="nextQuestion()">
-        ➜ Câu tiếp theo
-      </button>
+      <div
+        class="hint"
+        id="hint"
+      ></div>
 
     </div>
 
@@ -259,9 +425,89 @@
 
     let current = 0;
 
-    // =========================
-    // LOAD FILE MẶC ĐỊNH
-    // =========================
+    let timerInterval;
+
+    let seconds = 0;
+
+    // ======================
+    // SHUFFLE
+    // ======================
+
+    function shuffle(array) {
+
+      for (
+        let i = array.length - 1;
+        i > 0;
+        i--
+      ) {
+
+        const j =
+          Math.floor(
+            Math.random() * (i + 1)
+          );
+
+        [array[i], array[j]] =
+          [array[j], array[i]];
+
+      }
+
+    }
+
+    // ======================
+    // TIMER
+    // ======================
+
+    function startTimer() {
+
+      clearInterval(timerInterval);
+
+      seconds = 0;
+
+      timerInterval =
+        setInterval(() => {
+
+          seconds++;
+
+          const m =
+            String(
+              Math.floor(seconds / 60)
+            ).padStart(2, '0');
+
+          const s =
+            String(
+              seconds % 60
+            ).padStart(2, '0');
+
+          document
+            .getElementById('timer')
+            .innerText =
+            `${m}:${s}`;
+
+        }, 1000);
+
+    }
+
+    // ======================
+    // EXIT
+    // ======================
+
+    function exitQuiz() {
+
+      clearInterval(timerInterval);
+
+      document
+        .getElementById('quizPage')
+        .style.display = 'none';
+
+      document
+        .getElementById('menuPage')
+        .style.display = 'flex';
+
+    }
+
+    // ======================
+    // LOAD DEFAULT
+    // ======================
 
     async function loadDefaultExcel() {
 
@@ -275,15 +521,16 @@
 
     }
 
-    // =========================
+    // ======================
     // UPLOAD FILE
-    // =========================
+    // ======================
 
     document
       .getElementById('excelFile')
       .addEventListener('change', async (e) => {
 
-        const file = e.target.files[0];
+        const file =
+          e.target.files[0];
 
         const arrayBuffer =
           await file.arrayBuffer();
@@ -292,9 +539,9 @@
 
       });
 
-    // =========================
+    // ======================
     // PARSE EXCEL
-    // =========================
+    // ======================
 
     function parseExcel(arrayBuffer) {
 
@@ -307,18 +554,19 @@
         ];
 
       const json =
-        XLSX.utils.sheet_to_json(sheet, {
-          defval: ''
-        });
+        XLSX.utils.sheet_to_json(
+          sheet,
+          { defval: '' }
+        );
 
-      let currentCategory =
+      let category =
         'Chưa phân loại';
 
       questions = [];
 
       json.forEach(row => {
 
-        // Dòng phân loại
+        // Dòng category
 
         if (
           row['STT']
@@ -328,7 +576,7 @@
           !row['ĐÁP ÁN 1']
         ) {
 
-          currentCategory =
+          category =
             row['CÂU HỎI'];
 
           return;
@@ -364,11 +612,9 @@
 
             source:
               row['TRÍCH DẪN NGUỒN CÂU HỎI']
-              ||
-              'Không có nguồn',
+              || 'Không có nguồn',
 
-            category:
-              currentCategory
+            category
 
           });
 
@@ -376,23 +622,39 @@
 
       });
 
+      // XÁO ĐỀ
+
+      shuffle(questions);
+
       current = 0;
 
       document
-        .getElementById('quizCard')
+        .getElementById('menuPage')
+        .style.display = 'none';
+
+      document
+        .getElementById('quizPage')
         .style.display = 'block';
+
+      startTimer();
 
       showQuestion();
 
     }
 
-    // =========================
+    // ======================
     // SHOW QUESTION
-    // =========================
+    // ======================
 
     function showQuestion() {
 
-      const q = questions[current];
+      const q =
+        questions[current];
+
+      document
+        .getElementById('counter')
+        .innerText =
+        `Câu ${current + 1}/${questions.length}`;
 
       document
         .getElementById('question')
@@ -400,23 +662,15 @@
         q.question;
 
       document
-        .getElementById('category')
-        .innerText =
-        q.category;
-
-      document
-        .getElementById('counter')
-        .innerText =
-        `Câu ${current + 1}/${questions.length}`;
+        .getElementById('hint')
+        .style.display =
+        'none';
 
       const answersDiv =
-        document.getElementById('answers');
+        document
+          .getElementById('answers');
 
       answersDiv.innerHTML = '';
-
-      document
-        .getElementById('result')
-        .style.display = 'none';
 
       q.answers.forEach((answer, index) => {
 
@@ -424,7 +678,7 @@
           document.createElement('button');
 
         btn.className =
-          'answer-btn';
+          'answer';
 
         btn.innerText =
           `${String.fromCharCode(65 + index)}. ${answer}`;
@@ -438,16 +692,18 @@
 
     }
 
-    // =========================
+    // ======================
     // CHECK ANSWER
-    // =========================
+    // ======================
 
     function checkAnswer(index) {
 
-      const q = questions[current];
+      const q =
+        questions[current];
 
       const buttons =
-        document.querySelectorAll('.answer-btn');
+        document
+          .querySelectorAll('.answer');
 
       buttons.forEach((btn, i) => {
 
@@ -471,36 +727,40 @@
 
       });
 
-      const result =
-        document.getElementById('result');
+      const hint =
+        document
+          .getElementById('hint');
 
-      result.style.display = 'block';
+      hint.style.display =
+        'block';
 
-      result.innerHTML = `
+      hint.innerHTML = `
 
-        <h2>
+        <b>
           ${index === q.correct
-            ? '✅ ĐÁP ÁN ĐÚNG'
-            : '❌ TOANG RỒI ĐỒNG CHÍ'}
-        </h2>
-
-        <b>📖 Trích dẫn nguồn:</b>
-        <br>
-        ${q.source}
+            ? '✅ Đúng rồi đồng chí'
+            : '❌ Sai rồi chiến hữu'}
+        </b>
 
         <br><br>
 
-        <b>🏷 Phân loại:</b>
-        <br>
-        ${q.category}
+        📖 ${q.source}
 
       `;
 
+      // AUTO NEXT
+
+      setTimeout(() => {
+
+        nextQuestion();
+
+      }, 1800);
+
     }
 
-    // =========================
-    // NEXT QUESTION
-    // =========================
+    // ======================
+    // NEXT
+    // ======================
 
     function nextQuestion() {
 
@@ -509,6 +769,8 @@
       if (current >= questions.length) {
 
         current = 0;
+
+        shuffle(questions);
 
       }
 
@@ -519,4 +781,5 @@
   </script>
 
 </body>
+
 </html>
