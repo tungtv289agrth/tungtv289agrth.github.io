@@ -1,1 +1,187 @@
-hi
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ôn Thi Agribank</title>
+
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      background: white;
+    }
+
+    button:hover {
+      background: #f0f0f0;
+    }
+
+    .correct {
+      background: #d4edda;
+      border-color: green;
+    }
+
+    .wrong {
+      background: #f8d7da;
+      border-color: red;
+    }
+
+    .info {
+      margin-top: 20px;
+      padding: 15px;
+      background: #eef;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📚 Ôn Thi Agribank</h1>
+
+  <input type="file" id="excelFile" accept=".xlsx,.xls" />
+
+  <div class="card" id="quiz" style="display:none;">
+    <h2 id="question"></h2>
+
+    <div id="answers"></div>
+
+    <div class="info" id="result" style="display:none;"></div>
+
+    <br />
+
+    <button onclick="nextQuestion()">➡ Câu tiếp</button>
+  </div>
+
+  <script>
+    let questions = [];
+    let current = 0;
+
+    document.getElementById('excelFile').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+
+      const data = await file.arrayBuffer();
+
+      const workbook = XLSX.read(data);
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+      const json = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+      let category = 'Chưa phân loại';
+
+      questions = [];
+
+      json.forEach(row => {
+
+        if (row['STT'] && typeof row['STT'] === 'string' && !row['ĐÁP ÁN 1']) {
+          category = row['CÂU HỎI'];
+          return;
+        }
+
+        if (row['CÂU HỎI'] && row['ĐÁP ÁN ĐÚNG']) {
+          questions.push({
+            question: row['CÂU HỎI'],
+            answers: [
+              row['ĐÁP ÁN 1'],
+              row['ĐÁP ÁN 2'],
+              row['ĐÁP ÁN 3'],
+              row['ĐÁP ÁN 4']
+            ].filter(Boolean),
+            correct: Number(row['ĐÁP ÁN ĐÚNG']) - 1,
+            source: row['TRÍCH DẪN NGUỒN CÂU HỎI'] || 'Không có nguồn',
+            category
+          });
+        }
+      });
+
+      current = 0;
+      showQuestion();
+
+      document.getElementById('quiz').style.display = 'block';
+    });
+
+    function showQuestion() {
+      const q = questions[current];
+
+      document.getElementById('question').innerText = q.question;
+
+      const answersDiv = document.getElementById('answers');
+      answersDiv.innerHTML = '';
+
+      document.getElementById('result').style.display = 'none';
+
+      q.answers.forEach((answer, index) => {
+        const btn = document.createElement('button');
+
+        btn.innerText = `${String.fromCharCode(65 + index)}. ${answer}`;
+
+        btn.onclick = () => checkAnswer(index);
+
+        answersDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(index) {
+      const q = questions[current];
+
+      const buttons = document.querySelectorAll('#answers button');
+
+      buttons.forEach((btn, i) => {
+        if (i === q.correct) {
+          btn.classList.add('correct');
+        }
+
+        if (i === index && i !== q.correct) {
+          btn.classList.add('wrong');
+        }
+
+        btn.disabled = true;
+      });
+
+      const result = document.getElementById('result');
+
+      result.style.display = 'block';
+
+      result.innerHTML = `
+        <b>${index === q.correct ? '✅ ĐÁP ÁN ĐÚNG' : '❌ SAI'}</b>
+        <br><br>
+        <b>📖 Nguồn:</b> ${q.source}
+        <br><br>
+        <b>🏷 Phân loại:</b> ${q.category}
+      `;
+    }
+
+    function nextQuestion() {
+      current++;
+
+      if (current >= questions.length) {
+        current = 0;
+      }
+
+      showQuestion();
+    }
+  </script>
+
+</body>
+</html>
