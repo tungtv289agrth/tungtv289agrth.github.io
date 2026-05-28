@@ -1,186 +1,521 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ôn Thi Agribank</title>
+
+  <title>Lò Luyện Công Nhân Ngân Hàng</title>
 
   <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
+      margin: 0;
+      padding: 30px;
       font-family: Arial, sans-serif;
-      max-width: 900px;
+      background:
+        linear-gradient(135deg,
+          #0f172a,
+          #1e293b,
+          #334155);
+
+      color: white;
+
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1000px;
       margin: auto;
-      padding: 20px;
-      background: #f5f5f5;
     }
 
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
+    .title {
+      text-align: center;
+      margin-bottom: 30px;
     }
 
-    button {
-      width: 100%;
+    .title h1 {
+      font-size: 42px;
+      margin: 0;
+    }
+
+    .title p {
+      color: #cbd5e1;
       margin-top: 10px;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+    }
+
+    .top-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .option-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 25px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .option-card h2 {
+      margin-top: 0;
+      font-size: 24px;
+    }
+
+    .option-card p {
+      color: #cbd5e1;
+    }
+
+    .btn {
+      background: #22c55e;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    input[type=file] {
+      margin-top: 10px;
+      color: white;
+    }
+
+    .quiz-card {
+      display: none;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .badge {
+      background: #22c55e;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .question {
+      font-size: 28px;
+      line-height: 1.5;
+      margin-bottom: 30px;
+    }
+
+    .answer-btn {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 16px;
+      border-radius: 14px;
+      margin-bottom: 15px;
       cursor: pointer;
       text-align: left;
-      background: white;
+      transition: 0.2s;
+      font-size: 16px;
     }
 
-    button:hover {
-      background: #f0f0f0;
+    .answer-btn:hover {
+      background: rgba(255,255,255,0.12);
     }
 
     .correct {
-      background: #d4edda;
-      border-color: green;
+      background: rgba(34,197,94,0.3);
+      border-color: #22c55e;
     }
 
     .wrong {
-      background: #f8d7da;
-      border-color: red;
+      background: rgba(239,68,68,0.3);
+      border-color: #ef4444;
     }
 
-    .info {
+    .result {
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.06);
+      display: none;
+      line-height: 1.8;
+    }
+
+    .next-btn {
       margin-top: 20px;
-      padding: 15px;
-      background: #eef;
-      border-radius: 8px;
+      width: 100%;
+    }
+
+    @media(max-width: 700px) {
+
+      body {
+        padding: 15px;
+      }
+
+      .top-options {
+        grid-template-columns: 1fr;
+      }
+
+      .question {
+        font-size: 22px;
+      }
+
     }
   </style>
 </head>
+
 <body>
 
-  <h1>📚 Ôn Thi Agribank</h1>
+  <div class="container">
 
-  <input type="file" id="excelFile" accept=".xlsx,.xls" />
+    <div class="title">
+      <h1>💀 LÒ LUYỆN CÔNG NHÂN NGÂN HÀNG</h1>
 
-  <div class="card" id="quiz" style="display:none;">
-    <h2 id="question"></h2>
+      <p>
+        Học hôm nay để mai khỏi đứng quầy run như cầy sấy.
+      </p>
+    </div>
 
-    <div id="answers"></div>
+    <div class="top-options">
 
-    <div class="info" id="result" style="display:none;"></div>
+      <div class="option-card">
+        <h2>📚 Dùng ngân hàng đề có sẵn</h2>
 
-    <br />
+        <p>
+          Web sẽ tự đọc file <b>data.xlsx</b>
+          trong GitHub Pages.
+        </p>
 
-    <button onclick="nextQuestion()">➡ Câu tiếp</button>
+        <button class="btn" onclick="loadDefaultExcel()">
+          Bắt đầu cày
+        </button>
+      </div>
+
+      <div class="option-card">
+        <h2>📤 Upload file riêng</h2>
+
+        <p>
+          Upload file excel câu hỏi của bạn.
+        </p>
+
+        <input
+          type="file"
+          id="excelFile"
+          accept=".xlsx,.xls"
+        />
+      </div>
+
+    </div>
+
+    <div class="quiz-card" id="quizCard">
+
+      <div class="topbar">
+
+        <div class="badge" id="category"></div>
+
+        <div class="badge" id="counter"></div>
+
+      </div>
+
+      <div class="question" id="question"></div>
+
+      <div id="answers"></div>
+
+      <div class="result" id="result"></div>
+
+      <button class="btn next-btn" onclick="nextQuestion()">
+        ➜ Câu tiếp theo
+      </button>
+
+    </div>
+
   </div>
 
   <script>
+
     let questions = [];
+
     let current = 0;
 
-    document.getElementById('excelFile').addEventListener('change', async (e) => {
-      const file = e.target.files[0];
+    // =========================
+    // LOAD FILE MẶC ĐỊNH
+    // =========================
 
-      const data = await file.arrayBuffer();
+    async function loadDefaultExcel() {
 
-      const workbook = XLSX.read(data);
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const response =
+        await fetch('./data.xlsx');
 
-      const json = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+      const arrayBuffer =
+        await response.arrayBuffer();
 
-      let category = 'Chưa phân loại';
+      parseExcel(arrayBuffer);
+
+    }
+
+    // =========================
+    // UPLOAD FILE
+    // =========================
+
+    document
+      .getElementById('excelFile')
+      .addEventListener('change', async (e) => {
+
+        const file = e.target.files[0];
+
+        const arrayBuffer =
+          await file.arrayBuffer();
+
+        parseExcel(arrayBuffer);
+
+      });
+
+    // =========================
+    // PARSE EXCEL
+    // =========================
+
+    function parseExcel(arrayBuffer) {
+
+      const workbook =
+        XLSX.read(arrayBuffer);
+
+      const sheet =
+        workbook.Sheets[
+          workbook.SheetNames[0]
+        ];
+
+      const json =
+        XLSX.utils.sheet_to_json(sheet, {
+          defval: ''
+        });
+
+      let currentCategory =
+        'Chưa phân loại';
 
       questions = [];
 
       json.forEach(row => {
 
-        if (row['STT'] && typeof row['STT'] === 'string' && !row['ĐÁP ÁN 1']) {
-          category = row['CÂU HỎI'];
+        // Dòng phân loại
+
+        if (
+          row['STT']
+          &&
+          typeof row['STT'] === 'string'
+          &&
+          !row['ĐÁP ÁN 1']
+        ) {
+
+          currentCategory =
+            row['CÂU HỎI'];
+
           return;
+
         }
 
-        if (row['CÂU HỎI'] && row['ĐÁP ÁN ĐÚNG']) {
+        // Dòng câu hỏi
+
+        if (
+          row['CÂU HỎI']
+          &&
+          row['ĐÁP ÁN ĐÚNG']
+        ) {
+
           questions.push({
-            question: row['CÂU HỎI'],
+
+            question:
+              row['CÂU HỎI'],
+
             answers: [
+
               row['ĐÁP ÁN 1'],
               row['ĐÁP ÁN 2'],
               row['ĐÁP ÁN 3'],
               row['ĐÁP ÁN 4']
+
             ].filter(Boolean),
-            correct: Number(row['ĐÁP ÁN ĐÚNG']) - 1,
-            source: row['TRÍCH DẪN NGUỒN CÂU HỎI'] || 'Không có nguồn',
-            category
+
+            correct:
+              Number(
+                row['ĐÁP ÁN ĐÚNG']
+              ) - 1,
+
+            source:
+              row['TRÍCH DẪN NGUỒN CÂU HỎI']
+              ||
+              'Không có nguồn',
+
+            category:
+              currentCategory
+
           });
+
         }
+
       });
 
       current = 0;
+
+      document
+        .getElementById('quizCard')
+        .style.display = 'block';
+
       showQuestion();
 
-      document.getElementById('quiz').style.display = 'block';
-    });
-
-    function showQuestion() {
-      const q = questions[current];
-
-      document.getElementById('question').innerText = q.question;
-
-      const answersDiv = document.getElementById('answers');
-      answersDiv.innerHTML = '';
-
-      document.getElementById('result').style.display = 'none';
-
-      q.answers.forEach((answer, index) => {
-        const btn = document.createElement('button');
-
-        btn.innerText = `${String.fromCharCode(65 + index)}. ${answer}`;
-
-        btn.onclick = () => checkAnswer(index);
-
-        answersDiv.appendChild(btn);
-      });
     }
 
-    function checkAnswer(index) {
+    // =========================
+    // SHOW QUESTION
+    // =========================
+
+    function showQuestion() {
+
       const q = questions[current];
 
-      const buttons = document.querySelectorAll('#answers button');
+      document
+        .getElementById('question')
+        .innerText =
+        q.question;
 
-      buttons.forEach((btn, i) => {
-        if (i === q.correct) {
-          btn.classList.add('correct');
-        }
+      document
+        .getElementById('category')
+        .innerText =
+        q.category;
 
-        if (i === index && i !== q.correct) {
-          btn.classList.add('wrong');
-        }
+      document
+        .getElementById('counter')
+        .innerText =
+        `Câu ${current + 1}/${questions.length}`;
 
-        btn.disabled = true;
+      const answersDiv =
+        document.getElementById('answers');
+
+      answersDiv.innerHTML = '';
+
+      document
+        .getElementById('result')
+        .style.display = 'none';
+
+      q.answers.forEach((answer, index) => {
+
+        const btn =
+          document.createElement('button');
+
+        btn.className =
+          'answer-btn';
+
+        btn.innerText =
+          `${String.fromCharCode(65 + index)}. ${answer}`;
+
+        btn.onclick =
+          () => checkAnswer(index);
+
+        answersDiv.appendChild(btn);
+
       });
 
-      const result = document.getElementById('result');
+    }
+
+    // =========================
+    // CHECK ANSWER
+    // =========================
+
+    function checkAnswer(index) {
+
+      const q = questions[current];
+
+      const buttons =
+        document.querySelectorAll('.answer-btn');
+
+      buttons.forEach((btn, i) => {
+
+        btn.disabled = true;
+
+        if (i === q.correct) {
+
+          btn.classList.add('correct');
+
+        }
+
+        if (
+          i === index
+          &&
+          i !== q.correct
+        ) {
+
+          btn.classList.add('wrong');
+
+        }
+
+      });
+
+      const result =
+        document.getElementById('result');
 
       result.style.display = 'block';
 
       result.innerHTML = `
-        <b>${index === q.correct ? '✅ ĐÁP ÁN ĐÚNG' : '❌ SAI'}</b>
+
+        <h2>
+          ${index === q.correct
+            ? '✅ ĐÁP ÁN ĐÚNG'
+            : '❌ TOANG RỒI ĐỒNG CHÍ'}
+        </h2>
+
+        <b>📖 Trích dẫn nguồn:</b>
+        <br>
+        ${q.source}
+
         <br><br>
-        <b>📖 Nguồn:</b> ${q.source}
-        <br><br>
-        <b>🏷 Phân loại:</b> ${q.category}
+
+        <b>🏷 Phân loại:</b>
+        <br>
+        ${q.category}
+
       `;
+
     }
 
+    // =========================
+    // NEXT QUESTION
+    // =========================
+
     function nextQuestion() {
+
       current++;
 
       if (current >= questions.length) {
+
         current = 0;
+
       }
 
       showQuestion();
+
     }
+
   </script>
 
 </body>
