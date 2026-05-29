@@ -115,7 +115,7 @@
 
       border: 1px solid rgba(255,255,255,0.1);
 
-      border-radius: 20px;
+      border-radius: 24px;
 
       padding: 25px;
 
@@ -149,7 +149,7 @@
 
       padding: 14px;
 
-      border-radius: 12px;
+      border-radius: 14px;
 
       font-size: 16px;
 
@@ -207,6 +207,8 @@
 
       display: none;
 
+      padding-bottom: 120px;
+
     }
 
     .topbar {
@@ -241,7 +243,7 @@
 
       font-size: 30px;
 
-      line-height: 1.6;
+      line-height: 1.7;
 
       margin-bottom: 30px;
 
@@ -259,9 +261,9 @@
 
       color: white;
 
-      padding: 18px;
+      padding: 20px;
 
-      border-radius: 14px;
+      border-radius: 18px;
 
       margin-bottom: 15px;
 
@@ -269,7 +271,9 @@
 
       cursor: pointer;
 
-      font-size: 16px;
+      font-size: 18px;
+
+      line-height: 1.5;
 
       transition: 0.2s;
 
@@ -305,59 +309,11 @@
 
       padding: 20px;
 
-      border-radius: 14px;
+      border-radius: 18px;
 
       background: rgba(255,255,255,0.06);
 
       line-height: 1.8;
-
-    }
-
-    .nav-btn {
-
-      position: fixed;
-
-      top: 50%;
-
-      transform: translateY(-50%);
-
-      width: 60px;
-
-      height: 60px;
-
-      border-radius: 999px;
-
-      border: none;
-
-      font-size: 26px;
-
-      cursor: pointer;
-
-      z-index: 1000;
-
-      color: white;
-
-      background: rgba(0,0,0,0.5);
-
-      backdrop-filter: blur(8px);
-
-    }
-
-    .nav-btn:hover {
-
-      background: rgba(255,255,255,0.2);
-
-    }
-
-    .nav-left {
-
-      left: 15px;
-
-    }
-
-    .nav-right {
-
-      right: 15px;
 
     }
 
@@ -367,7 +323,7 @@
 
       padding: 18px;
 
-      border-radius: 14px;
+      border-radius: 16px;
 
       border: 1px solid rgba(255,255,255,0.1);
 
@@ -389,7 +345,7 @@
 
       border: 1px solid rgba(255,255,255,0.08);
 
-      border-radius: 16px;
+      border-radius: 18px;
 
       padding: 18px;
 
@@ -431,6 +387,120 @@
 
     }
 
+    /* ====================== */
+    /* MOBILE NAV */
+    /* ====================== */
+
+    .mobile-nav {
+
+      position: fixed;
+
+      bottom: 0;
+      left: 0;
+
+      width: 100%;
+
+      display: flex;
+
+      gap: 12px;
+
+      padding:
+        14px
+        16px
+        calc(14px + env(safe-area-inset-bottom));
+
+      background:
+        linear-gradient(
+          to top,
+          rgba(15,23,42,0.98),
+          rgba(15,23,42,0.88)
+        );
+
+      backdrop-filter: blur(12px);
+
+      border-top:
+        1px solid rgba(255,255,255,0.08);
+
+      z-index: 999;
+
+    }
+
+    .mobile-nav-btn {
+
+      flex: 1;
+
+      border: none;
+
+      height: 56px;
+
+      border-radius: 18px;
+
+      font-size: 16px;
+
+      font-weight: bold;
+
+      cursor: pointer;
+
+      color: white;
+
+      background:
+        rgba(255,255,255,0.08);
+
+      transition: 0.2s;
+
+    }
+
+    .mobile-nav-btn:active {
+
+      transform: scale(0.97);
+
+    }
+
+    .mobile-nav-btn.primary {
+
+      background:
+        linear-gradient(
+          135deg,
+          #22c55e,
+          #16a34a
+        );
+
+    }
+
+    @media(min-width: 900px) {
+
+      .mobile-nav {
+
+        width: auto;
+
+        left: 50%;
+
+        transform: translateX(-50%);
+
+        bottom: 24px;
+
+        border-radius: 22px;
+
+        padding: 12px;
+
+        background:
+          rgba(15,23,42,0.78);
+
+        border:
+          1px solid rgba(255,255,255,0.08);
+
+      }
+
+      .mobile-nav-btn {
+
+        width: 180px;
+
+        flex: unset;
+
+      }
+
+    }
+
     @media(max-width: 768px) {
 
       .option-grid {
@@ -447,16 +517,21 @@
 
       .question {
 
-        font-size: 24px;
+        font-size: 22px;
 
       }
 
-      .nav-btn {
+      .answer {
 
-        width: 50px;
-        height: 50px;
+        font-size: 16px;
 
-        font-size: 22px;
+        padding: 18px;
+
+      }
+
+      .card {
+
+        padding: 18px;
 
       }
 
@@ -491,7 +566,7 @@
 
       </div>
 
-      <!-- MENU CHÍNH -->
+      <!-- MAIN MENU -->
 
       <div
         class="option-grid"
@@ -537,7 +612,7 @@
 
       </div>
 
-      <!-- MENU MODE -->
+      <!-- MODES -->
 
       <div
         id="defaultModes"
@@ -553,7 +628,7 @@
             </h2>
 
             <p>
-              Gõ keyword để tìm câu hỏi.
+              Fuzzy search tìm câu hỏi siêu nhanh.
             </p>
 
             <button
@@ -572,7 +647,7 @@
             </h2>
 
             <p>
-              Chia bộ 50 câu.
+              Chia bộ 50 câu, đảm bảo đủ toàn bộ ngân hàng đề.
             </p>
 
             <button
@@ -597,7 +672,7 @@
 
       </div>
 
-      <!-- BỘ ĐỀ -->
+      <!-- PRACTICE SETS -->
 
       <div
         id="practiceSets"
@@ -607,7 +682,7 @@
         <div class="card">
 
           <h2 class="section-title">
-            📦 Chọn bộ đề luyện tập
+            📦 Chọn bộ đề
           </h2>
 
           <div
@@ -645,7 +720,7 @@
             type="text"
             class="search-box"
             id="searchInput"
-            placeholder="Ví dụ: văn hóa doanh nghiệp, điều lệ, quy định..."
+            placeholder="Nhập keyword..."
           >
 
           <div id="searchResults"></div>
@@ -675,20 +750,6 @@
     class="container quiz"
     id="quizPage"
   >
-
-    <button
-      class="nav-btn nav-left"
-      onclick="prevQuestion()"
-    >
-      ←
-    </button>
-
-    <button
-      class="nav-btn nav-right"
-      onclick="nextQuestion()"
-    >
-      →
-    </button>
 
     <div class="card">
 
@@ -736,6 +797,26 @@
         class="hint"
         id="hint"
       ></div>
+
+    </div>
+
+    <!-- NAVIGATION -->
+
+    <div class="mobile-nav">
+
+      <button
+        class="mobile-nav-btn"
+        onclick="prevQuestion()"
+      >
+        ← Câu trước
+      </button>
+
+      <button
+        class="mobile-nav-btn primary"
+        onclick="nextQuestion()"
+      >
+        Câu tiếp →
+      </button>
 
     </div>
 
@@ -888,7 +969,7 @@
     }
 
     // ======================
-    // UPLOAD FILE
+    // UPLOAD
     // ======================
 
     document
@@ -1001,7 +1082,7 @@
     }
 
     // ======================
-    // CHIA BỘ ĐỀ
+    // SETS
     // ======================
 
     function showPracticeSets() {
@@ -1020,13 +1101,12 @@
 
       container.innerHTML = '';
 
-      const total =
-        allQuestions.length;
-
       const chunkSize = 50;
 
       const totalSets =
-        Math.ceil(total / chunkSize);
+        Math.ceil(
+          allQuestions.length / chunkSize
+        );
 
       for (
         let i = 0;
@@ -1074,10 +1154,6 @@
 
     }
 
-    // ======================
-    // START SET
-    // ======================
-
     function startPracticeSet(index) {
 
       const chunkSize = 50;
@@ -1101,7 +1177,7 @@
     }
 
     // ======================
-    // QUIZ START
+    // START QUIZ
     // ======================
 
     function startQuiz() {
@@ -1231,8 +1307,6 @@
 
       `;
 
-      // KHÔNG AUTO NEXT NỮA
-
     }
 
     // ======================
@@ -1241,18 +1315,15 @@
 
     function nextQuestion() {
 
-      current++;
-
       if (
-        current >= questions.length
+        current < questions.length - 1
       ) {
 
-        current =
-          questions.length - 1;
+        current++;
+
+        showQuestion();
 
       }
-
-      showQuestion();
 
     }
 
@@ -1262,15 +1333,13 @@
 
     function prevQuestion() {
 
-      current--;
+      if (current > 0) {
 
-      if (current < 0) {
+        current--;
 
-        current = 0;
+        showQuestion();
 
       }
-
-      showQuestion();
 
     }
 
@@ -1368,7 +1437,7 @@
 
             <div class="search-result">
 
-              Không tìm thấy kết quả nào 💀
+              Không tìm thấy 💀
 
             </div>
 
@@ -1398,8 +1467,7 @@
 
             <div class="correct-answer">
 
-              ✅ Đáp án đúng:
-              ${q.correctText}
+              ✅ ${q.correctText}
 
             </div>
 
@@ -1436,7 +1504,7 @@
       });
 
     // ======================
-    // DETAIL
+    // TOGGLE DETAIL
     // ======================
 
     function toggleDetail(btn) {
