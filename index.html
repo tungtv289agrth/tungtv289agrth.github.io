@@ -1,1528 +1,626 @@
-<!DOCTYPE html>
-<html lang="vi">
-
-<head>
-
-  <meta charset="UTF-8" />
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
-
-  <title>
-    💀 TRẠI KHỔ SAI TRI THỨC
-  </title>
-
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-
-      margin: 0;
-
-      font-family: Arial, sans-serif;
-
-      background:
-        linear-gradient(
-          135deg,
-          #0f172a,
-          #1e293b,
-          #334155
-        );
-
-      color: white;
-
-      min-height: 100vh;
-
-      overflow-x: hidden;
-
-    }
-
-    .container {
-
-      width: 100%;
-      max-width: 1000px;
-
-      margin: auto;
-
-      padding: 20px;
-
-    }
-
-    .center {
-
-      display: flex;
-
-      justify-content: center;
-      align-items: center;
-
-      min-height: 100vh;
-
-    }
-
-    .menu {
-
-      width: 100%;
-
-      display: flex;
-      flex-direction: column;
-
-      gap: 20px;
-
-    }
-
-    .title {
-
-      text-align: center;
-
-      margin-bottom: 10px;
-
-    }
-
-    .title h1 {
-
-      margin: 0;
-
-      font-size: 42px;
-
-    }
-
-    .title p {
-
-      color: #cbd5e1;
-
-    }
-
-    .option-grid {
-
-      display: grid;
-
-      grid-template-columns: 1fr 1fr;
-
-      gap: 20px;
-
-    }
-
-    .card {
-
-      background: rgba(255,255,255,0.08);
-
-      border: 1px solid rgba(255,255,255,0.1);
-
-      border-radius: 24px;
-
-      padding: 25px;
-
-      backdrop-filter: blur(12px);
-
-    }
-
-    .option-card h2 {
-
-      margin-top: 0;
-
-    }
-
-    .option-card p {
-
-      color: #cbd5e1;
-
-      line-height: 1.6;
-
-    }
-
-    .btn {
-
-      width: 100%;
-
-      border: none;
-
-      background: #22c55e;
-
-      color: white;
-
-      padding: 14px;
-
-      border-radius: 14px;
-
-      font-size: 16px;
-
-      font-weight: bold;
-
-      cursor: pointer;
-
-      transition: 0.2s;
-
-    }
-
-    .btn:hover {
-
-      transform: translateY(-2px);
-
-      opacity: 0.9;
-
-    }
-
-    .btn-secondary {
-
-      background: #3b82f6;
-
-    }
-
-    .btn-danger {
-
-      background: #ef4444;
-
-    }
-
-    .btn-warning {
-
-      background: #f59e0b;
-
-    }
-
-    input[type=file] {
-
-      margin-top: 10px;
-
-      width: 100%;
-
-      color: white;
-
-    }
-
-    .hidden {
-
-      display: none !important;
-
-    }
-
-    .quiz {
-
-      display: none;
-
-      padding-bottom: 120px;
-
-    }
-
-    .topbar {
-
-      display: flex;
-
-      justify-content: space-between;
-
-      align-items: center;
-
-      gap: 10px;
-
-      flex-wrap: wrap;
-
-      margin-bottom: 20px;
-
-    }
-
-    .badge {
-
-      background: rgba(255,255,255,0.08);
-
-      padding: 10px 16px;
-
-      border-radius: 999px;
-
-      font-size: 14px;
-
-    }
-
-    .question {
-
-      font-size: 30px;
-
-      line-height: 1.7;
-
-      margin-bottom: 30px;
-
-      font-weight: bold;
-
-    }
-
-    .answer {
-
-      width: 100%;
-
-      background: rgba(255,255,255,0.06);
-
-      border: 1px solid rgba(255,255,255,0.08);
-
-      color: white;
-
-      padding: 20px;
-
-      border-radius: 18px;
-
-      margin-bottom: 15px;
-
-      text-align: left;
-
-      cursor: pointer;
-
-      font-size: 18px;
-
-      line-height: 1.5;
-
-      transition: 0.2s;
-
-    }
-
-    .answer:hover {
-
-      background: rgba(255,255,255,0.12);
-
-    }
-
-    .correct {
-
-      background: rgba(34,197,94,0.35);
-
-      border-color: #22c55e;
-
-    }
-
-    .wrong {
-
-      background: rgba(239,68,68,0.35);
-
-      border-color: #ef4444;
-
-    }
-
-    .hint {
-
-      display: none;
-
-      margin-top: 20px;
-
-      padding: 20px;
-
-      border-radius: 18px;
-
-      background: rgba(255,255,255,0.06);
-
-      line-height: 1.8;
-
-    }
-
-    .search-box {
-
-      width: 100%;
-
-      padding: 18px;
-
-      border-radius: 16px;
-
-      border: 1px solid rgba(255,255,255,0.1);
-
-      background: rgba(255,255,255,0.06);
-
-      color: white;
-
-      font-size: 16px;
-
-      outline: none;
-
-      margin-bottom: 20px;
-
-    }
-
-    .search-result {
-
-      background: rgba(255,255,255,0.05);
-
-      border: 1px solid rgba(255,255,255,0.08);
-
-      border-radius: 18px;
-
-      padding: 18px;
-
-      margin-bottom: 15px;
-
-    }
-
-    .search-result h3 {
-
-      margin-top: 0;
-
-      line-height: 1.6;
-
-    }
-
-    .correct-answer {
-
-      color: #4ade80;
-
-      margin-top: 12px;
-
-      font-weight: bold;
-
-    }
-
-    .detail {
-
-      margin-top: 15px;
-
-      color: #cbd5e1;
-
-      line-height: 1.8;
-
-    }
-
-    .section-title {
-
-      margin-bottom: 20px;
-
-    }
-
-    /* ====================== */
-    /* MOBILE NAV */
-    /* ====================== */
-
-    .mobile-nav {
-
-      position: fixed;
-
-      bottom: 0;
-      left: 0;
-
-      width: 100%;
-
-      display: flex;
-
-      gap: 12px;
-
-      padding:
-        14px
-        16px
-        calc(14px + env(safe-area-inset-bottom));
-
-      background:
-        linear-gradient(
-          to top,
-          rgba(15,23,42,0.98),
-          rgba(15,23,42,0.88)
-        );
-
-      backdrop-filter: blur(12px);
-
-      border-top:
-        1px solid rgba(255,255,255,0.08);
-
-      z-index: 999;
-
-    }
-
-    .mobile-nav-btn {
-
-      flex: 1;
-
-      border: none;
-
-      height: 56px;
-
-      border-radius: 18px;
-
-      font-size: 16px;
-
-      font-weight: bold;
-
-      cursor: pointer;
-
-      color: white;
-
-      background:
-        rgba(255,255,255,0.08);
-
-      transition: 0.2s;
-
-    }
-
-    .mobile-nav-btn:active {
-
-      transform: scale(0.97);
-
-    }
-
-    .mobile-nav-btn.primary {
-
-      background:
-        linear-gradient(
-          135deg,
-          #22c55e,
-          #16a34a
-        );
-
-    }
-
-    @media(min-width: 900px) {
-
-      .mobile-nav {
-
-        width: auto;
-
-        left: 50%;
-
-        transform: translateX(-50%);
-
-        bottom: 24px;
-
-        border-radius: 22px;
-
-        padding: 12px;
-
-        background:
-          rgba(15,23,42,0.78);
-
-        border:
-          1px solid rgba(255,255,255,0.08);
-
+<style>
+      * {
+        box-sizing: border-box;
       }
 
-      .mobile-nav-btn {
+      body {
+        margin: 0;
 
-        width: 180px;
+        font-family: Arial, sans-serif;
 
-        flex: unset;
+        background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
 
+        color: white;
+
+        min-height: 100vh;
+
+        overflow-x: hidden;
       }
 
-    }
+      .container {
+        width: 100%;
+        max-width: 920px;
 
-    @media(max-width: 768px) {
+        margin: auto;
 
-      .option-grid {
+        padding: 14px;
+      }
 
-        grid-template-columns: 1fr;
+      .center {
+        display: flex;
 
+        justify-content: center;
+        align-items: center;
+
+        min-height: 100vh;
+      }
+
+      .menu {
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+
+        gap: 20px;
+      }
+
+      .title {
+        text-align: center;
+
+        margin-bottom: 10px;
       }
 
       .title h1 {
+        margin: 0;
 
-        font-size: 32px;
-
+        font-size: 42px;
       }
 
-      .question {
-
-        font-size: 22px;
-
+      .title p {
+        color: #cbd5e1;
       }
 
-      .answer {
+      .option-grid {
+        display: grid;
 
-        font-size: 16px;
+        grid-template-columns: 1fr 1fr;
 
-        padding: 18px;
-
+        gap: 20px;
       }
 
       .card {
+        background: rgba(255, 255, 255, 0.08);
+
+        border: 1px solid rgba(255, 255, 255, 0.1);
+
+        border-radius: 20px;
 
         padding: 18px;
 
+        backdrop-filter: blur(12px);
       }
 
-    }
-
-  </style>
-
-</head>
-
-<body>
-
-  <!-- ====================== -->
-  <!-- MENU -->
-  <!-- ====================== -->
-
-  <div
-    class="container center"
-    id="menuPage"
-  >
-
-    <div class="menu">
-
-      <div class="title">
-
-        <h1>
-          💀 TRẠI KHỔ SAI TRI THỨC
-        </h1>
-
-        <p>
-          KPI chưa xong, học phần mới đã mở.
-        </p>
-
-      </div>
-
-      <!-- MAIN MENU -->
-
-      <div
-        class="option-grid"
-        id="mainOptions"
-      >
-
-        <div class="card option-card">
-
-          <h2>
-            📚 Dùng đề có sẵn
-          </h2>
-
-          <p>
-            Hội thi Đại sứ Văn hóa 2026
-          </p>
-
-          <button
-            class="btn"
-            onclick="showDefaultModes()"
-          >
-            Bắt đầu cày
-          </button>
-
-        </div>
-
-        <div class="card option-card">
-
-          <h2>
-            📤 Upload file riêng
-          </h2>
-
-          <p>
-            Upload file excel của bạn
-          </p>
-
-          <input
-            type="file"
-            id="excelFile"
-            accept=".xlsx,.xls"
-          >
-
-        </div>
-
-      </div>
-
-      <!-- MODES -->
-
-      <div
-        id="defaultModes"
-        class="hidden"
-      >
-
-        <div class="option-grid">
-
-          <div class="card option-card">
-
-            <h2>
-              🔎 Tra cứu đề
-            </h2>
-
-            <p>
-              Fuzzy search tìm câu hỏi siêu nhanh.
-            </p>
-
-            <button
-              class="btn btn-secondary"
-              onclick="startSearchMode()"
-            >
-              Mở tra cứu
-            </button>
-
-          </div>
-
-          <div class="card option-card">
-
-            <h2>
-              🧠 Luyện tập đề
-            </h2>
-
-            <p>
-              Chia bộ 50 câu, đảm bảo đủ toàn bộ ngân hàng đề.
-            </p>
-
-            <button
-              class="btn"
-              onclick="showPracticeSets()"
-            >
-              Vào luyện tập
-            </button>
-
-          </div>
-
-        </div>
-
-        <br>
-
-        <button
-          class="btn btn-danger"
-          onclick="backToMainMenu()"
-        >
-          Quay lại
-        </button>
-
-      </div>
-
-      <!-- PRACTICE SETS -->
-
-      <div
-        id="practiceSets"
-        class="hidden"
-      >
-
-        <div class="card">
-
-          <h2 class="section-title">
-            📦 Chọn bộ đề
-          </h2>
-
-          <div
-            class="option-grid"
-            id="setsContainer"
-          ></div>
-
-          <br>
-
-          <button
-            class="btn btn-danger"
-            onclick="backToModes()"
-          >
-            Quay lại
-          </button>
-
-        </div>
-
-      </div>
-
-      <!-- SEARCH -->
-
-      <div
-        id="searchMode"
-        class="hidden"
-      >
-
-        <div class="card">
-
-          <h2 class="section-title">
-            🔎 Tra cứu câu hỏi
-          </h2>
-
-          <input
-            type="text"
-            class="search-box"
-            id="searchInput"
-            placeholder="Nhập keyword..."
-          >
-
-          <div id="searchResults"></div>
-
-          <br>
-
-          <button
-            class="btn btn-danger"
-            onclick="backToModes()"
-          >
-            Quay lại
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- ====================== -->
-  <!-- QUIZ -->
-  <!-- ====================== -->
-
-  <div
-    class="container quiz"
-    id="quizPage"
-  >
-
-    <div class="card">
-
-      <div class="topbar">
-
-        <div
-          class="badge"
-          id="counter"
-        >
-          Câu 1
-        </div>
-
-        <div
-          class="badge"
-          id="timer"
-        >
-          00:00
-        </div>
-
-        <div
-          class="badge"
-          id="setName"
-        >
-          Bộ đề
-        </div>
-
-        <button
-          class="btn btn-danger"
-          style="width:auto;padding:10px 16px"
-          onclick="exitQuiz()"
-        >
-          Thoát
-        </button>
-
-      </div>
-
-      <div
-        class="question"
-        id="question"
-      ></div>
-
-      <div id="answers"></div>
-
-      <div
-        class="hint"
-        id="hint"
-      ></div>
-
-    </div>
-
-    <!-- NAVIGATION -->
-
-    <div class="mobile-nav">
-
-      <button
-        class="mobile-nav-btn"
-        onclick="prevQuestion()"
-      >
-        ← Câu trước
-      </button>
-
-      <button
-        class="mobile-nav-btn primary"
-        onclick="nextQuestion()"
-      >
-        Câu tiếp →
-      </button>
-
-    </div>
-
-  </div>
-
-  <script>
-
-    let allQuestions = [];
-
-    let questions = [];
-
-    let current = 0;
-
-    let timerInterval;
-
-    let seconds = 0;
-
-    let currentSetName = '';
-
-    // ======================
-    // SHUFFLE
-    // ======================
-
-    function shuffle(array) {
-
-      for (
-        let i = array.length - 1;
-        i > 0;
-        i--
-      ) {
-
-        const j =
-          Math.floor(
-            Math.random() * (i + 1)
-          );
-
-        [array[i], array[j]] =
-          [array[j], array[i]];
-
+      .option-card h2 {
+        margin-top: 0;
       }
 
-    }
+      .option-card p {
+        color: #cbd5e1;
 
-    // ======================
-    // TIMER
-    // ======================
-
-    function startTimer() {
-
-      clearInterval(timerInterval);
-
-      seconds = 0;
-
-      timerInterval =
-        setInterval(() => {
-
-          seconds++;
-
-          const m =
-            String(
-              Math.floor(seconds / 60)
-            ).padStart(2, '0');
-
-          const s =
-            String(
-              seconds % 60
-            ).padStart(2, '0');
-
-          document
-            .getElementById('timer')
-            .innerText =
-            `${m}:${s}`;
-
-        }, 1000);
-
-    }
-
-    // ======================
-    // LOAD DEFAULT
-    // ======================
-
-    async function loadDefaultExcel() {
-
-      const response =
-        await fetch('./data.xlsx');
-
-      const arrayBuffer =
-        await response.arrayBuffer();
-
-      parseExcel(arrayBuffer);
-
-    }
-
-    // ======================
-    // MENU
-    // ======================
-
-    async function showDefaultModes() {
-
-      if (allQuestions.length === 0) {
-
-        await loadDefaultExcel();
-
+        line-height: 1.6;
       }
 
-      document
-        .getElementById('mainOptions')
-        .classList.add('hidden');
+      .btn {
+        width: 100%;
 
-      document
-        .getElementById('defaultModes')
-        .classList.remove('hidden');
+        border: none;
 
-    }
+        background: #22c55e;
 
-    function backToMainMenu() {
+        color: white;
 
-      document
-        .getElementById('defaultModes')
-        .classList.add('hidden');
+        padding: 14px;
 
-      document
-        .getElementById('practiceSets')
-        .classList.add('hidden');
+        border-radius: 14px;
 
-      document
-        .getElementById('searchMode')
-        .classList.add('hidden');
+        font-size: 16px;
 
-      document
-        .getElementById('mainOptions')
-        .classList.remove('hidden');
+        font-weight: bold;
 
-    }
+        cursor: pointer;
 
-    function backToModes() {
+        transition: 0.2s;
+      }
 
-      document
-        .getElementById('practiceSets')
-        .classList.add('hidden');
+      .btn:hover {
+        transform: translateY(-2px);
 
-      document
-        .getElementById('searchMode')
-        .classList.add('hidden');
+        opacity: 0.9;
+      }
 
-      document
-        .getElementById('defaultModes')
-        .classList.remove('hidden');
+      .btn-secondary {
+        background: #3b82f6;
+      }
 
-    }
+      .btn-danger {
+        background: #ef4444;
+      }
 
-    // ======================
-    // UPLOAD
-    // ======================
+      .btn-warning {
+        background: #f59e0b;
+      }
 
-    document
-      .getElementById('excelFile')
-      .addEventListener('change', async (e) => {
+      input[type="file"] {
+        margin-top: 10px;
 
-        const file =
-          e.target.files[0];
+        width: 100%;
 
-        const arrayBuffer =
-          await file.arrayBuffer();
+        color: white;
+      }
 
-        parseExcel(arrayBuffer);
+      .hidden {
+        display: none !important;
+      }
 
-        alert(
-          '✅ Load file thành công'
+      .quiz {
+        display: none;
+
+        padding-bottom: 120px;
+      }
+
+      .topbar {
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        gap: 10px;
+
+        flex-wrap: wrap;
+
+        margin-bottom: 20px;
+      }
+
+      .badge {
+        background: rgba(255, 255, 255, 0.08);
+
+        padding: 8px 14px;
+
+        border-radius: 999px;
+
+        font-size: 13px;
+      }
+
+      .question {
+        font-size: 24px;
+
+        line-height: 1.5;
+
+        margin-bottom: 18px;
+
+        font-weight: bold;
+      }
+
+      .answer {
+        width: 100%;
+
+        background: rgba(255, 255, 255, 0.06);
+
+        border: 1px solid rgba(255, 255, 255, 0.08);
+
+        color: white;
+
+        padding: 14px 16px;
+
+        border-radius: 16px;
+
+        margin-bottom: 10px;
+
+        text-align: left;
+
+        cursor: pointer;
+
+        font-size: 15px;
+
+        line-height: 1.4;
+
+        transition: 0.2s;
+      }
+
+      .answer:hover {
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .correct {
+        background: rgba(34, 197, 94, 0.35);
+
+        border-color: #22c55e;
+      }
+
+      .wrong {
+        background: rgba(239, 68, 68, 0.35);
+
+        border-color: #ef4444;
+      }
+
+      .hint {
+        display: none;
+
+        margin-top: 14px;
+
+        padding: 14px;
+
+        border-radius: 16px;
+
+        background: rgba(255, 255, 255, 0.06);
+
+        line-height: 1.6;
+
+        font-size: 14px;
+      }
+
+      .search-box {
+        width: 100%;
+
+        padding: 18px;
+
+        border-radius: 16px;
+
+        border: 1px solid rgba(255, 255, 255, 0.1);
+
+        background: rgba(255, 255, 255, 0.06);
+
+        color: white;
+
+        font-size: 16px;
+
+        outline: none;
+
+        margin-bottom: 20px;
+      }
+
+      .search-result {
+        background: rgba(255, 255, 255, 0.05);
+
+        border: 1px solid rgba(255, 255, 255, 0.08);
+
+        border-radius: 18px;
+
+        padding: 18px;
+
+        margin-bottom: 15px;
+      }
+
+      .search-result h3 {
+        margin-top: 0;
+
+        line-height: 1.6;
+      }
+
+      .correct-answer {
+        color: #4ade80;
+
+        margin-top: 12px;
+
+        font-weight: bold;
+      }
+
+      .detail {
+        margin-top: 15px;
+
+        color: #cbd5e1;
+
+        line-height: 1.8;
+      }
+
+      .section-title {
+        margin-bottom: 20px;
+      }
+
+      /* ====================== */
+      /* MOBILE NAV */
+      /* ====================== */
+
+      .mobile-nav {
+        position: fixed;
+
+        bottom: 0;
+        left: 0;
+
+        width: 100%;
+
+        display: flex;
+
+        gap: 12px;
+
+        padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+
+        background: linear-gradient(
+          to top,
+          rgba(15, 23, 42, 0.98),
+          rgba(15, 23, 42, 0.88)
         );
 
-      });
+        backdrop-filter: blur(12px);
 
-    // ======================
-    // PARSE EXCEL
-    // ======================
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
 
-    function parseExcel(arrayBuffer) {
-
-      const workbook =
-        XLSX.read(arrayBuffer);
-
-      const sheet =
-        workbook.Sheets[
-          workbook.SheetNames[0]
-        ];
-
-      const json =
-        XLSX.utils.sheet_to_json(
-          sheet,
-          { defval: '' }
-        );
-
-      let category =
-        'Chưa phân loại';
-
-      allQuestions = [];
-
-      json.forEach(row => {
-
-        if (
-          row['STT']
-          &&
-          typeof row['STT'] === 'string'
-          &&
-          !row['ĐÁP ÁN 1']
-        ) {
-
-          category =
-            row['CÂU HỎI'];
-
-          return;
-
-        }
-
-        if (
-          row['CÂU HỎI']
-          &&
-          row['ĐÁP ÁN ĐÚNG']
-        ) {
-
-          const answers = [
-
-            row['ĐÁP ÁN 1'],
-            row['ĐÁP ÁN 2'],
-            row['ĐÁP ÁN 3'],
-            row['ĐÁP ÁN 4']
-
-          ].filter(Boolean);
-
-          const correctIndex =
-            Number(
-              row['ĐÁP ÁN ĐÚNG']
-            ) - 1;
-
-          allQuestions.push({
-
-            question:
-              row['CÂU HỎI'],
-
-            answers,
-
-            correct:
-              correctIndex,
-
-            correctText:
-              answers[correctIndex],
-
-            source:
-              row['TRÍCH DẪN NGUỒN CÂU HỎI']
-              || 'Không có nguồn',
-
-            category
-
-          });
-
-        }
-
-      });
-
-      shuffle(allQuestions);
-
-    }
-
-    // ======================
-    // SETS
-    // ======================
-
-    function showPracticeSets() {
-
-      document
-        .getElementById('defaultModes')
-        .classList.add('hidden');
-
-      document
-        .getElementById('practiceSets')
-        .classList.remove('hidden');
-
-      const container =
-        document
-          .getElementById('setsContainer');
-
-      container.innerHTML = '';
-
-      const chunkSize = 50;
-
-      const totalSets =
-        Math.ceil(
-          allQuestions.length / chunkSize
-        );
-
-      for (
-        let i = 0;
-        i < totalSets;
-        i++
-      ) {
-
-        const start =
-          i * chunkSize;
-
-        const end =
-          start + chunkSize;
-
-        const setQuestions =
-          allQuestions.slice(start, end);
-
-        const div =
-          document.createElement('div');
-
-        div.className =
-          'card';
-
-        div.innerHTML = `
-
-          <h2>
-            📦 Bộ đề ${i + 1}
-          </h2>
-
-          <p>
-            ${setQuestions.length} câu hỏi
-          </p>
-
-          <button
-            class="btn"
-            onclick="startPracticeSet(${i})"
-          >
-            Bắt đầu
-          </button>
-
-        `;
-
-        container.appendChild(div);
-
+        z-index: 999;
       }
 
-    }
+      .mobile-nav-btn {
+        flex: 1;
 
-    function startPracticeSet(index) {
+        border: none;
 
-      const chunkSize = 50;
+        height: 48px;
 
-      const start =
-        index * chunkSize;
+        border-radius: 16px;
 
-      const end =
-        start + chunkSize;
+        font-size: 14px;
 
-      questions =
-        allQuestions.slice(start, end);
+        font-weight: bold;
 
-      current = 0;
+        cursor: pointer;
 
-      currentSetName =
-        `📦 Bộ đề ${index + 1}`;
+        color: white;
 
-      startQuiz();
+        background: rgba(255, 255, 255, 0.08);
 
-    }
-
-    // ======================
-    // START QUIZ
-    // ======================
-
-    function startQuiz() {
-
-      document
-        .getElementById('menuPage')
-        .style.display = 'none';
-
-      document
-        .getElementById('quizPage')
-        .style.display = 'block';
-
-      document
-        .getElementById('setName')
-        .innerText =
-        currentSetName;
-
-      startTimer();
-
-      showQuestion();
-
-    }
-
-    // ======================
-    // SHOW QUESTION
-    // ======================
-
-    function showQuestion() {
-
-      const q =
-        questions[current];
-
-      document
-        .getElementById('counter')
-        .innerText =
-        `Câu ${current + 1}/${questions.length}`;
-
-      document
-        .getElementById('question')
-        .innerText =
-        q.question;
-
-      document
-        .getElementById('hint')
-        .style.display =
-        'none';
-
-      const answersDiv =
-        document
-          .getElementById('answers');
-
-      answersDiv.innerHTML = '';
-
-      q.answers.forEach((answer, index) => {
-
-        const btn =
-          document.createElement('button');
-
-        btn.className =
-          'answer';
-
-        btn.innerText =
-          `${String.fromCharCode(65 + index)}. ${answer}`;
-
-        btn.onclick =
-          () => checkAnswer(index);
-
-        answersDiv.appendChild(btn);
-
-      });
-
-    }
-
-    // ======================
-    // CHECK ANSWER
-    // ======================
-
-    function checkAnswer(index) {
-
-      const q =
-        questions[current];
-
-      const buttons =
-        document
-          .querySelectorAll('.answer');
-
-      buttons.forEach((btn, i) => {
-
-        btn.disabled = true;
-
-        if (i === q.correct) {
-
-          btn.classList.add('correct');
-
-        }
-
-        if (
-          i === index
-          &&
-          i !== q.correct
-        ) {
-
-          btn.classList.add('wrong');
-
-        }
-
-      });
-
-      const hint =
-        document
-          .getElementById('hint');
-
-      hint.style.display =
-        'block';
-
-      hint.innerHTML = `
-
-        <b>
-          ${index === q.correct
-            ? '✅ Đúng rồi đồng chí'
-            : '❌ Sai rồi chiến hữu'}
-        </b>
-
-        <br><br>
-
-        📖 ${q.source}
-
-      `;
-
-    }
-
-    // ======================
-    // NEXT
-    // ======================
-
-    function nextQuestion() {
-
-      if (
-        current < questions.length - 1
-      ) {
-
-        current++;
-
-        showQuestion();
-
+        transition: 0.2s;
       }
 
-    }
-
-    // ======================
-    // PREV
-    // ======================
-
-    function prevQuestion() {
-
-      if (current > 0) {
-
-        current--;
-
-        showQuestion();
-
+      .mobile-nav-btn:active {
+        transform: scale(0.97);
       }
 
-    }
+      .mobile-nav-btn.primary {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+      }
 
-    // ======================
-    // EXIT
-    // ======================
+      @media (min-width: 900px) {
+        .mobile-nav {
+          width: auto;
 
-    function exitQuiz() {
+          left: 50%;
 
-      clearInterval(timerInterval);
+          transform: translateX(-50%);
 
-      document
-        .getElementById('quizPage')
-        .style.display = 'none';
+          bottom: 24px;
 
-      document
-        .getElementById('menuPage')
-        .style.display = 'flex';
+          border-radius: 22px;
 
-    }
+          padding: 12px;
 
-    // ======================
-    // SEARCH MODE
-    // ======================
+          background: rgba(15, 23, 42, 0.78);
 
-    function startSearchMode() {
-
-      document
-        .getElementById('defaultModes')
-        .classList.add('hidden');
-
-      document
-        .getElementById('searchMode')
-        .classList.remove('hidden');
-
-    }
-
-    // ======================
-    // FUZZY SEARCH
-    // ======================
-
-    function fuzzyMatch(text, keyword) {
-
-      text =
-        text.toLowerCase();
-
-      keyword =
-        keyword.toLowerCase();
-
-      const words =
-        keyword.split(' ');
-
-      return words.every(
-        word => text.includes(word)
-      );
-
-    }
-
-    document
-      .getElementById('searchInput')
-      .addEventListener('input', (e) => {
-
-        const keyword =
-          e.target.value.trim();
-
-        const resultsDiv =
-          document
-            .getElementById('searchResults');
-
-        resultsDiv.innerHTML = '';
-
-        if (
-          keyword.length < 2
-        ) {
-
-          return;
-
+          border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        const results =
-          allQuestions.filter(q =>
+        .mobile-nav-btn {
+          width: 180px;
 
-            fuzzyMatch(
-              q.question,
-              keyword
-            )
+          flex: unset;
+        }
+      }
 
-          );
-
-        if (
-          results.length === 0
-        ) {
-
-          resultsDiv.innerHTML = `
-
-            <div class="search-result">
-
-              Không tìm thấy 💀
-
-            </div>
-
-          `;
-
-          return;
-
+      @media (max-width: 768px) {
+        .container {
+          padding: 10px;
         }
 
-        results.slice(0, 30)
-          .forEach((q, idx) => {
+        .option-grid {
+          grid-template-columns: 1fr;
+        }
 
-          const div =
-            document.createElement('div');
+        .title h1 {
+          font-size: 28px;
+        }
 
-          div.className =
-            'search-result';
+        .title p {
+          font-size: 14px;
+        }
 
-          const isDesktop =
-            window.innerWidth > 1000;
+        .question {
+          font-size: 20px;
 
-          div.innerHTML = `
+          line-height: 1.45;
 
-            <h3>
-              ${idx + 1}. ${q.question}
-            </h3>
+          margin-bottom: 14px;
+        }
 
-            <div class="correct-answer">
+        .answer {
+          font-size: 14px;
 
-              ✅ ${q.correctText}
+          padding: 12px 14px;
 
-            </div>
+          border-radius: 14px;
 
-            ${
-              isDesktop
-              ? `
-                <div class="detail">
-                  📖 ${q.source}
-                </div>
-              `
-              : `
-                <button
-                  class="btn btn-warning"
-                  style="margin-top:15px"
-                  onclick="toggleDetail(this)"
-                >
-                  Xem chi tiết
-                </button>
+          margin-bottom: 8px;
+        }
 
-                <div
-                  class="detail hidden"
-                >
-                  📖 ${q.source}
-                </div>
-              `
-            }
+        .card {
+          padding: 14px;
 
-          `;
+          border-radius: 18px;
+        }
 
-          resultsDiv.appendChild(div);
+        .topbar {
+          gap: 8px;
 
-        });
+          margin-bottom: 14px;
+        }
 
-      });
+        .badge {
+          font-size: 12px;
 
-    // ======================
-    // TOGGLE DETAIL
-    // ======================
+          padding: 7px 12px;
+        }
 
-    function toggleDetail(btn) {
+        .mobile-nav {
+          gap: 10px;
 
-      const detail =
-        btn.nextElementSibling;
+          padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+        }
 
-      detail.classList.toggle('hidden');
+        .mobile-nav-btn {
+          height: 44px;
 
-      btn.innerText =
-        detail.classList.contains('hidden')
-        ? 'Xem chi tiết'
-        : 'Ẩn chi tiết';
+          font-size: 13px;
 
-    }
+          border-radius: 14px;
+        }
 
-  </script>
+        .top-action-btn {
+          padding: 10px 14px;
 
-</body>
+          font-size: 13px;
+        }
 
-</html>
+        .hint {
+          font-size: 13px;
+
+          line-height: 1.5;
+        }
+      }
+      /* ====================== */
+      /* CLICKABLE */
+      /* ====================== */
+
+      .clickable {
+        cursor: pointer;
+      }
+
+      /* ====================== */
+      /* TOP ACTION */
+      /* ====================== */
+
+      .top-action-btn {
+        border: none;
+
+        background: rgba(239, 68, 68, 0.18);
+
+        color: #fecaca;
+
+        padding: 12px 18px;
+
+        border-radius: 14px;
+
+        font-weight: bold;
+
+        cursor: pointer;
+
+        transition: 0.2s;
+
+        backdrop-filter: blur(10px);
+      }
+
+      .top-action-btn:hover {
+        background: rgba(239, 68, 68, 0.28);
+      }
+
+      .top-action-btn.submit {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+
+        color: white;
+      }
+
+      /* ====================== */
+      /* QUESTION PANEL */
+      /* ====================== */
+
+      .question-panel {
+        position: fixed;
+
+        inset: 0;
+
+        background: rgba(0, 0, 0, 0.6);
+
+        z-index: 99999;
+
+        display: flex;
+
+        justify-content: center;
+        align-items: center;
+
+        padding: 20px;
+      }
+
+      .question-panel-content {
+        width: 100%;
+
+        max-width: 900px;
+
+        max-height: 80vh;
+
+        overflow: auto;
+
+        background: linear-gradient(135deg, #1e293b, #334155);
+
+        border-radius: 24px;
+
+        padding: 24px;
+
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .question-panel-header {
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        margin-bottom: 20px;
+      }
+
+      .close-panel-btn {
+        width: 42px;
+        height: 42px;
+
+        border-radius: 12px;
+
+        border: none;
+
+        background: rgba(255, 255, 255, 0.08);
+
+        color: white;
+
+        cursor: pointer;
+
+        font-size: 18px;
+      }
+
+      .question-grid {
+        display: grid;
+
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+
+        gap: 12px;
+      }
+
+      .question-item {
+        height: 60px;
+
+        border-radius: 16px;
+
+        border: none;
+
+        cursor: pointer;
+
+        font-weight: bold;
+
+        color: white;
+
+        background: rgba(255, 255, 255, 0.08);
+
+        transition: 0.2s;
+      }
+
+      .question-item:hover {
+        transform: translateY(-2px);
+      }
+
+      .question-item.done {
+        background: rgba(34, 197, 94, 0.35);
+
+        border: 1px solid #22c55e;
+      }
+
+      .question-item.current {
+        background: #3b82f6;
+      }
+
+      @media (max-width: 768px) {
+        .question-grid {
+          grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+        }
+
+        .question-item {
+          height: 52px;
+
+          border-radius: 14px;
+        }
+      }
+    </style>
