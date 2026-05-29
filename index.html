@@ -1,4 +1,15 @@
-<style>
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>💀 TRẠI KHỔ SAI TRI THỨC</title>
+
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+
+    <style>
       * {
         box-sizing: border-box;
       }
@@ -624,3 +635,799 @@
         }
       }
     </style>
+  </head>
+
+  <body>
+    <!-- ====================== -->
+    <!-- MENU -->
+    <!-- ====================== -->
+
+    <div class="container center" id="menuPage">
+      <div class="menu">
+        <div class="title">
+          <h1>💀 TRẠI KHỔ SAI TRI THỨC</h1>
+
+          <p>KPI chưa xong, học phần mới đã mở.</p>
+        </div>
+
+        <!-- MAIN MENU -->
+
+        <div class="option-grid" id="mainOptions">
+          <div class="card option-card">
+            <h2>📚 Dùng đề có sẵn</h2>
+
+            <p>Hội thi Đại sứ Văn hóa 2026</p>
+
+            <button class="btn" onclick="showDefaultModes()">
+              Bắt đầu cày
+            </button>
+          </div>
+
+          <div class="card option-card">
+            <h2>📤 Upload file riêng</h2>
+
+            <p>Upload file excel của bạn</p>
+
+            <input type="file" id="excelFile" accept=".xlsx,.xls" />
+          </div>
+        </div>
+
+        <!-- MODES -->
+
+        <div id="defaultModes" class="hidden">
+          <div class="option-grid">
+            <div class="card option-card">
+              <h2>🔎 Tra cứu đề</h2>
+
+              <p>Fuzzy search tìm câu hỏi siêu nhanh.</p>
+
+              <button class="btn btn-secondary" onclick="startSearchMode()">
+                Mở tra cứu
+              </button>
+            </div>
+
+            <div class="card option-card">
+              <h2>🧠 Luyện tập đề</h2>
+
+              <p>Chia bộ 50 câu, đảm bảo đủ toàn bộ ngân hàng đề.</p>
+
+              <button class="btn" onclick="showPracticeSets()">
+                Vào luyện tập
+              </button>
+            </div>
+          </div>
+
+          <br />
+
+          <button class="btn btn-danger" onclick="backToMainMenu()">
+            Quay lại
+          </button>
+        </div>
+
+        <!-- PRACTICE SETS -->
+
+        <div id="practiceSets" class="hidden">
+          <div class="card">
+            <h2 class="section-title">📦 Chọn bộ đề</h2>
+
+            <div class="option-grid" id="setsContainer"></div>
+
+            <br />
+
+            <button class="btn btn-danger" onclick="backToModes()">
+              Quay lại
+            </button>
+          </div>
+        </div>
+
+        <!-- SEARCH -->
+
+        <div id="searchMode" class="hidden">
+          <div class="card">
+            <h2 class="section-title">🔎 Tra cứu câu hỏi</h2>
+
+            <input
+              type="text"
+              class="search-box"
+              id="searchInput"
+              placeholder="Nhập keyword..."
+            />
+
+            <div id="searchResults"></div>
+
+            <br />
+
+            <button class="btn btn-danger" onclick="backToModes()">
+              Quay lại
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================== -->
+    <!-- QUIZ -->
+    <!-- ====================== -->
+
+    <div class="container quiz" id="quizPage">
+      <div class="card">
+        <div class="topbar">
+          <div
+            class="badge clickable"
+            id="counter"
+            onclick="openQuestionPanel()"
+          >
+            Câu 1
+          </div>
+
+          <div class="badge" id="timer">00:00</div>
+
+          <div class="badge" id="setName">Bộ đề</div>
+
+          <button
+            class="top-action-btn"
+            id="submitBtn"
+            onclick="handleTopAction()"
+          >
+            🚪 Thoát
+          </button>
+        </div>
+        <div class="question" id="question"></div>
+
+        <div id="answers"></div>
+
+        <div class="hint" id="hint"></div>
+        <!-- QUESTION PANEL -->
+
+        <div class="question-panel hidden" id="questionPanel">
+          <div class="question-panel-content">
+            <div class="question-panel-header">
+              <h2>📚 Danh sách câu hỏi</h2>
+
+              <button class="close-panel-btn" onclick="closeQuestionPanel()">
+                ✕
+              </button>
+            </div>
+
+            <div class="question-grid" id="questionGrid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NAVIGATION -->
+
+      <div class="mobile-nav">
+        <button class="mobile-nav-btn" onclick="prevQuestion()">
+          ← Câu trước
+        </button>
+
+        <button class="mobile-nav-btn primary" onclick="nextQuestion()">
+          Câu tiếp →
+        </button>
+      </div>
+    </div>
+
+    <script>
+      let allQuestions = [];
+
+      let questions = [];
+
+      let current = 0;
+
+      let timerInterval;
+
+      let seconds = 0;
+
+      let currentSetName = "";
+      /* ====================== */
+      /* STATE */
+      /* ====================== */
+
+      let answeredQuestions = {};
+
+      let submitted = false;
+
+      // ======================
+      // SHUFFLE
+      // ======================
+
+      function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
+      // ======================
+      // TIMER
+      // ======================
+
+      function startTimer() {
+        clearInterval(timerInterval);
+
+        seconds = 0;
+
+        timerInterval = setInterval(() => {
+          seconds++;
+
+          const m = String(Math.floor(seconds / 60)).padStart(2, "0");
+
+          const s = String(seconds % 60).padStart(2, "0");
+
+          document.getElementById("timer").innerText = `${m}:${s}`;
+        }, 1000);
+      }
+
+      // ======================
+      // LOAD DEFAULT
+      // ======================
+
+      async function loadDefaultExcel() {
+        const response = await fetch("./data.xlsx");
+
+        const arrayBuffer = await response.arrayBuffer();
+
+        parseExcel(arrayBuffer);
+      }
+
+      // ======================
+      // MENU
+      // ======================
+
+      async function showDefaultModes() {
+        if (allQuestions.length === 0) {
+          await loadDefaultExcel();
+        }
+
+        document.getElementById("mainOptions").classList.add("hidden");
+
+        document.getElementById("defaultModes").classList.remove("hidden");
+      }
+
+      function backToMainMenu() {
+        document.getElementById("defaultModes").classList.add("hidden");
+
+        document.getElementById("practiceSets").classList.add("hidden");
+
+        document.getElementById("searchMode").classList.add("hidden");
+
+        document.getElementById("mainOptions").classList.remove("hidden");
+      }
+
+      function backToModes() {
+        document.getElementById("practiceSets").classList.add("hidden");
+
+        document.getElementById("searchMode").classList.add("hidden");
+
+        document.getElementById("defaultModes").classList.remove("hidden");
+      }
+
+      // ======================
+      // UPLOAD
+      // ======================
+
+      document
+        .getElementById("excelFile")
+        .addEventListener("change", async (e) => {
+          const file = e.target.files[0];
+
+          const arrayBuffer = await file.arrayBuffer();
+
+          parseExcel(arrayBuffer);
+
+          alert("✅ Load file thành công");
+        });
+
+      // ======================
+      // PARSE EXCEL
+      // ======================
+
+      function parseExcel(arrayBuffer) {
+        const workbook = XLSX.read(arrayBuffer);
+
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+        const json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+        let category = "Chưa phân loại";
+
+        allQuestions = [];
+
+        json.forEach((row) => {
+          if (
+            row["STT"] &&
+            typeof row["STT"] === "string" &&
+            !row["ĐÁP ÁN 1"]
+          ) {
+            category = row["CÂU HỎI"];
+
+            return;
+          }
+
+          if (row["CÂU HỎI"] && row["ĐÁP ÁN ĐÚNG"]) {
+            const answers = [
+              row["ĐÁP ÁN 1"],
+              row["ĐÁP ÁN 2"],
+              row["ĐÁP ÁN 3"],
+              row["ĐÁP ÁN 4"],
+            ].filter(Boolean);
+
+            const correctIndex = Number(row["ĐÁP ÁN ĐÚNG"]) - 1;
+
+            allQuestions.push({
+              question: row["CÂU HỎI"],
+
+              answers,
+
+              correct: correctIndex,
+
+              correctText: answers[correctIndex],
+
+              source: row["TRÍCH DẪN NGUỒN CÂU HỎI"] || "Không có nguồn",
+
+              category,
+            });
+          }
+        });
+
+        shuffle(allQuestions);
+      }
+
+      // ======================
+      // SETS
+      // ======================
+
+      function showPracticeSets() {
+        document.getElementById("defaultModes").classList.add("hidden");
+
+        document.getElementById("practiceSets").classList.remove("hidden");
+
+        const container = document.getElementById("setsContainer");
+
+        container.innerHTML = "";
+
+        const chunkSize = 50;
+
+        const totalSets = Math.ceil(allQuestions.length / chunkSize);
+
+        for (let i = 0; i < totalSets; i++) {
+          const start = i * chunkSize;
+
+          const end = start + chunkSize;
+
+          const setQuestions = allQuestions.slice(start, end);
+
+          const div = document.createElement("div");
+
+          div.className = "card";
+
+          div.innerHTML = `
+
+          <h2>
+            📦 Bộ đề ${i + 1}
+          </h2>
+
+          <p>
+            ${setQuestions.length} câu hỏi
+          </p>
+
+          <button
+            class="btn"
+            onclick="startPracticeSet(${i})"
+          >
+            Bắt đầu
+          </button>
+
+        `;
+
+          container.appendChild(div);
+        }
+      }
+
+      function startPracticeSet(index) {
+        const chunkSize = 50;
+
+        const start = index * chunkSize;
+
+        const end = start + chunkSize;
+
+        questions = allQuestions.slice(start, end);
+
+        current = 0;
+
+        currentSetName = `📦 Bộ đề ${index + 1}`;
+
+        answeredQuestions = {};
+
+        submitted = false;
+
+        startQuiz();
+      }
+
+      // ======================
+      // START QUIZ
+      // ======================
+
+      function startQuiz() {
+        document.getElementById("menuPage").style.display = "none";
+
+        document.getElementById("quizPage").style.display = "block";
+
+        document.getElementById("setName").innerText = currentSetName;
+
+        startTimer();
+
+        showQuestion();
+      }
+
+      // ======================
+      // SHOW QUESTION
+      // ======================
+      function showQuestion() {
+        const q = questions[current];
+
+        document.getElementById("counter").innerText =
+          `Câu ${current + 1}/${questions.length}`;
+
+        document.getElementById("question").innerText = q.question;
+
+        const answersDiv = document.getElementById("answers");
+
+        answersDiv.innerHTML = "";
+
+        const savedAnswer = answeredQuestions[current];
+
+        q.answers.forEach((answer, index) => {
+          const btn = document.createElement("button");
+
+          btn.className = "answer";
+
+          btn.innerText = `${String.fromCharCode(65 + index)}. ${answer}`;
+
+          // CHƯA LÀM
+
+          if (savedAnswer === undefined) {
+            btn.onclick = () => checkAnswer(index);
+          }
+
+          // ĐÃ LÀM
+          else {
+            btn.disabled = true;
+
+            if (index === q.correct) {
+              btn.classList.add("correct");
+            }
+
+            if (index === savedAnswer && index !== q.correct) {
+              btn.classList.add("wrong");
+            }
+          }
+
+          answersDiv.appendChild(btn);
+        });
+
+        const hint = document.getElementById("hint");
+
+        if (savedAnswer !== undefined) {
+          hint.style.display = "block";
+
+          hint.innerHTML = `
+
+            <b>
+              ${
+                savedAnswer === q.correct
+                  ? "✅ Đúng rồi đồng chí"
+                  : "❌ Sai rồi chiến hữu"
+              }
+            </b>
+
+            <br><br>
+
+            📖 ${q.source}
+
+          `;
+        } else {
+          hint.style.display = "none";
+        }
+
+        updateQuestionPanel();
+      }
+
+      // ======================
+      // CHECK ANSWER
+      // ======================
+      function checkAnswer(index) {
+        const q = questions[current];
+
+        answeredQuestions[current] = index;
+
+        const buttons = document.querySelectorAll(".answer");
+
+        buttons.forEach((btn, i) => {
+          btn.disabled = true;
+
+          if (i === q.correct) {
+            btn.classList.add("correct");
+          }
+
+          if (i === index && i !== q.correct) {
+            btn.classList.add("wrong");
+          }
+        });
+
+        const hint = document.getElementById("hint");
+
+        hint.style.display = "block";
+
+        hint.innerHTML = `
+
+          <b>
+            ${
+              index === q.correct
+                ? "✅ Đúng rồi đồng chí"
+                : "❌ Sai rồi chiến hữu"
+            }
+          </b>
+
+          <br><br>
+
+          📖 ${q.source}
+
+        `;
+
+        updateQuestionPanel();
+
+        checkCompleted();
+      }
+      // ======================
+      // NEXT
+      // ======================
+
+      function nextQuestion() {
+        if (current < questions.length - 1) {
+          current++;
+
+          showQuestion();
+        }
+      }
+
+      // ======================
+      // PREV
+      // ======================
+
+      function prevQuestion() {
+        if (current > 0) {
+          current--;
+
+          showQuestion();
+        }
+      }
+
+      // ======================
+      // EXIT
+      // ======================
+
+      function exitQuiz() {
+        clearInterval(timerInterval);
+
+        document.getElementById("quizPage").style.display = "none";
+
+        document.getElementById("menuPage").style.display = "flex";
+      }
+
+      // ======================
+      // SEARCH MODE
+      // ======================
+
+      function startSearchMode() {
+        document.getElementById("defaultModes").classList.add("hidden");
+
+        document.getElementById("searchMode").classList.remove("hidden");
+      }
+
+      // ======================
+      // FUZZY SEARCH
+      // ======================
+
+      function fuzzyMatch(text, keyword) {
+        text = text.toLowerCase();
+
+        keyword = keyword.toLowerCase();
+
+        const words = keyword.split(" ");
+
+        return words.every((word) => text.includes(word));
+      }
+
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        const keyword = e.target.value.trim();
+
+        const resultsDiv = document.getElementById("searchResults");
+
+        resultsDiv.innerHTML = "";
+
+        if (keyword.length < 2) {
+          return;
+        }
+
+        const results = allQuestions.filter((q) =>
+          fuzzyMatch(q.question, keyword),
+        );
+
+        if (results.length === 0) {
+          resultsDiv.innerHTML = `
+
+            <div class="search-result">
+
+              Không tìm thấy 💀
+
+            </div>
+
+          `;
+
+          return;
+        }
+
+        results.slice(0, 30).forEach((q, idx) => {
+          const div = document.createElement("div");
+
+          div.className = "search-result";
+
+          const isDesktop = window.innerWidth > 1000;
+
+          div.innerHTML = `
+
+            <h3>
+              ${idx + 1}. ${q.question}
+            </h3>
+
+            <div class="correct-answer">
+
+              ✅ ${q.correctText}
+
+            </div>
+
+            ${
+              isDesktop
+                ? `
+                <div class="detail">
+                  📖 ${q.source}
+                </div>
+              `
+                : `
+                <button
+                  class="btn btn-warning"
+                  style="margin-top:15px"
+                  onclick="toggleDetail(this)"
+                >
+                  Xem chi tiết
+                </button>
+
+                <div
+                  class="detail hidden"
+                >
+                  📖 ${q.source}
+                </div>
+              `
+            }
+
+          `;
+
+          resultsDiv.appendChild(div);
+        });
+      });
+
+      // ======================
+      // TOGGLE DETAIL
+      // ======================
+
+      function toggleDetail(btn) {
+        const detail = btn.nextElementSibling;
+
+        detail.classList.toggle("hidden");
+
+        btn.innerText = detail.classList.contains("hidden")
+          ? "Xem chi tiết"
+          : "Ẩn chi tiết";
+      }
+
+      function openQuestionPanel() {
+        document.getElementById("questionPanel").classList.remove("hidden");
+
+        updateQuestionPanel();
+      }
+
+      function closeQuestionPanel() {
+        document.getElementById("questionPanel").classList.add("hidden");
+      }
+
+      function updateQuestionPanel() {
+        const grid = document.getElementById("questionGrid");
+
+        if (!grid) return;
+
+        grid.innerHTML = "";
+
+        questions.forEach((q, index) => {
+          const btn = document.createElement("button");
+
+          btn.className = "question-item";
+
+          btn.innerText = index + 1;
+
+          if (answeredQuestions[index] !== undefined) {
+            btn.classList.add("done");
+          }
+
+          if (index === current) {
+            btn.classList.add("current");
+          }
+
+          btn.onclick = () => {
+            current = index;
+
+            showQuestion();
+
+            closeQuestionPanel();
+          };
+
+          grid.appendChild(btn);
+        });
+      }
+
+      /* ====================== */
+      /* CHECK COMPLETED */
+      /* ====================== */
+
+      function checkCompleted() {
+        if (Object.keys(answeredQuestions).length === questions.length) {
+          const btn = document.getElementById("submitBtn");
+
+          btn.innerHTML = "📤 Nộp bài";
+
+          btn.classList.add("submit");
+        }
+      }
+
+      /* ====================== */
+      /* TOP ACTION */
+      /* ====================== */
+
+      function handleTopAction() {
+        const completed =
+          Object.keys(answeredQuestions).length === questions.length;
+
+        if (completed) {
+          submitQuiz();
+        } else {
+          exitQuiz();
+        }
+      }
+
+      /* ====================== */
+      /* SUBMIT */
+      /* ====================== */
+
+      function submitQuiz() {
+        let correct = 0;
+
+        questions.forEach((q, index) => {
+          if (answeredQuestions[index] === q.correct) {
+            correct++;
+          }
+        });
+
+        const score = Math.round((correct / questions.length) * 100);
+
+        alert(
+          `🎯 Kết quả\n\n` +
+            `✅ Đúng: ${correct}/${questions.length}\n` +
+            `📊 Điểm: ${score}%`,
+        );
+
+        exitQuiz();
+      }
+    </script>
+  </body>
+</html>
